@@ -29,18 +29,31 @@
     }
   });
      
-  function verifierConnexion() {
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
+ function verifierConnexion() {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
 
-    if (email === "mode123" && password === "mode123") {
-      window.location.href = "admin.html";
-    } else {
+  fetch('/api/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  })
+    .then(async res => {
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || "Erreur inconnue");
+      }
+      // Connexion réussie
       window.location.href = "main.html#mainSite";
-    }
+    })
+    .catch(err => {
+      alert(err.message); // Email incorrect ou mot de passe incorrect
+    });
 
-    return false;
-  }
+  return false;
+}
+
+
   function afficherTenueFromStyle(style) {
     const tenues = {
       "Classique": [
@@ -298,10 +311,3 @@ if (contactData) {
 } else {
   document.getElementById("contactAdmin").textContent = "Aucun contact disponible.";
 }
-function changerLangue(langue) {
-  document.querySelectorAll("[data-i18n]").forEach((el) => {
-    const key = el.getAttribute("data-i18n");
-    el.textContent = translations[langue][key] || key;
-  });
-}
-
